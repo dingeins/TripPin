@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,42 +14,23 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using TripPin.DataModel;
-using Microsoft.OData.Client;
 
-// The Hub Application template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
+// The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
 namespace TripPin
 {
     /// <summary>
-    /// A page that displays a grouped collection of items.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class HubPage : Page
+    public sealed partial class AirlinesPage : Page
     {
-        // TripPin instances
-        private static Person me = null;
-        private static string myPhotoUri = null;
-        private static int numMyTrips = -1;
-        private static int numMyFriends = -1;
-        private static int numPeople = -1;
-        private static int numPhotos = -1;
-        private static int numAirports = -1;
-        private static int numAirlines = -1;
+        private NavigationHelper navigationHelper;
+        private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        private readonly NavigationHelper navigationHelper;
-        private readonly ObservableDictionary defaultViewModel = new ObservableDictionary();
-        private readonly ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView("Resources");
-
-        public HubPage()
+        public AirlinesPage()
         {
             this.InitializeComponent();
-
-            // Hub is only supported in Portrait orientation
-            DisplayInformation.AutoRotationPreferences = DisplayOrientations.Portrait;
-
-            this.NavigationCacheMode = NavigationCacheMode.Required;
 
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
@@ -88,47 +67,8 @@ namespace TripPin
         /// session.  The state will be null the first time a page is visited.</param>
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            if (me == null)
-            {
-                me = await App.tripPinContext.Me.GetValueAsync();
-            }
-            if (myPhotoUri == null)
-            {
-                myPhotoUri = "http://services.odata.org/v4/TripPinServiceRW/Me/Photo/$value";
-            }
-            if (numMyTrips < 0)
-            {
-                numMyTrips = 2;
-            }
-            if (numMyFriends < 0)
-            {
-                numMyFriends = 3;
-            }
-            if (numPeople < 0)
-            {
-                numPeople = 4;
-            }
-            if (numPhotos < 0)
-            {
-                numPhotos = 5;
-            }
-            if (numAirlines < 0)
-            {
-                numAirlines = 6;
-            }
-            if (numAirports < 0)
-            {
-                numAirports = 7;
-            }
-
-            this.DefaultViewModel["Me"] = me;
-            this.DefaultViewModel["MyPhotoUri"] = myPhotoUri;
-            this.DefaultViewModel["NumMyTrips"] = numMyTrips.ToString() + " trips";
-            this.DefaultViewModel["NumMyFriends"] = numMyFriends.ToString() + " friends";
-            this.DefaultViewModel["NumPeople"] = numPeople.ToString() + " people";
-            this.DefaultViewModel["NumPhotos"] = numPhotos.ToString() + " photos";
-            this.DefaultViewModel["NumAirlines"] = numAirlines.ToString() + " airlines";
-            this.DefaultViewModel["NumAirports"] = numAirports.ToString() + " airports";
+            var airlines = await App.tripPinContext.Airlines.ExecuteAsync();
+            DefaultViewModel["Airlines"] = airlines;
         }
 
         /// <summary>
@@ -141,7 +81,6 @@ namespace TripPin
         /// serializable state.</param>
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
-            // TODO: Save the unique state of the page here.
         }
 
         #region NavigationHelper registration
@@ -150,14 +89,15 @@ namespace TripPin
         /// The methods provided in this section are simply used to allow
         /// NavigationHelper to respond to the page's navigation methods.
         /// <para>
-        /// Page specific logic should be placed in event handlers for the
+        /// Page specific logic should be placed in event handlers for the  
         /// <see cref="NavigationHelper.LoadState"/>
         /// and <see cref="NavigationHelper.SaveState"/>.
-        /// The navigation parameter is available in the LoadState method
+        /// The navigation parameter is available in the LoadState method 
         /// in addition to page state preserved during an earlier session.
         /// </para>
         /// </summary>
-        /// <param name="e">Event data that describes how this page was reached.</param>
+        /// <param name="e">Provides data for navigation methods and event
+        /// handlers that cannot cancel the navigation request.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
@@ -169,13 +109,5 @@ namespace TripPin
         }
 
         #endregion
-
-        private void AirlinesTile_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (!Frame.Navigate(typeof(AirlinesPage)))
-            {
-                throw new Exception(this.resourceLoader.GetString("NavigationFailedExceptionMessage"));
-            }
-        }
     }
 }
