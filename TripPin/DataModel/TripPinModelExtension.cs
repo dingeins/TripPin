@@ -16,4 +16,15 @@ namespace TripPin.DataModel
             }
         }
     }
+
+    public partial class Airline
+    {
+        public string LogoUri
+        {
+            get
+            {
+                return "Assets/AirlineLogos/" + this._AirlineCode + ".png";
+            }
+        }
+    }
 }

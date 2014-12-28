@@ -94,7 +94,7 @@ namespace TripPin
             }
             if (myPhotoUri == null)
             {
-                myPhotoUri = "http://services.odata.org/v4/TripPinServiceRW/Me/Photo/$value";
+                myPhotoUri = App.serviceUri + "$value";
             }
             if (numMyTrips < 0)
             {

@@ -6,7 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
+    Background="{ThemeResource HubBackgroundImageBrush}">
 
     <Grid x:Name="LayoutRoot">
 
@@ -32,9 +33,13 @@
             <ListView ItemsSource="{Binding Airlines}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding AirlineCode}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
-                            <TextBlock Text="{Binding Name}" Style="{ThemeResource ListViewItemContentTextBlockStyle}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,19">
+                            <Image Source="{Binding LogoUri}" Stretch="UniformToFill" Width="86" Height="86" />
+                            <StackPanel Margin="15,0,0,0">
+                                <TextBlock Text="{Binding Name}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
+                                <TextBlock Text="Code" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black"/>
+                                <TextBlock Text="{Binding AirlineCode}" Style="{ThemeResource TitleTextBlockStyle}" />
+                            </StackPanel>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>

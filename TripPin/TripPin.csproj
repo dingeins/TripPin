@@ -106,11 +106,17 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\AirlineLogos\AA.png" />
+    <Content Include="Assets\AirlineLogos\AC.png" />
+    <Content Include="Assets\AirlineLogos\AF.png" />
+    <Content Include="Assets\AirlineLogos\AK.png" />
+    <Content Include="Assets\AirlineLogos\AZ.png" />
+    <Content Include="Assets\AirlineLogos\CZ.png" />
+    <Content Include="Assets\AirlineLogos\EK.png" />
+    <Content Include="Assets\AirlineLogos\FM.png" />
     <Content Include="Assets\airlines.png" />
     <Content Include="Assets\airports.png" />
-    <Content Include="Assets\DarkGray.png" />
     <Content Include="Assets\LightGray.png" />
-    <Content Include="Assets\MediumGray.png" />
     <Content Include="Assets\HubBackground.theme-dark.png" />
     <Content Include="Assets\HubBackground.theme-light.png" />
     <Content Include="Assets\Logo.scale-240.png" />
@@ -172,6 +178,7 @@
       <HintPath>..\packages\Microsoft.Spatial.6.9.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.Spatial.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

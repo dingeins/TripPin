@@ -28,7 +28,8 @@ namespace TripPin
     public sealed partial class App : Application
     {
         // TripPin context
-        public static DefaultContainer tripPinContext = new DefaultContainer(new Uri("http://services.odata.org/v4/TripPinServiceRW"));
+        public static readonly string serviceUri = "http://services.odata.org/v4/TripPinServiceRW/";
+        public static DefaultContainer tripPinContext = new DefaultContainer(new Uri(serviceUri));
 
         private TransitionCollection transitions;
 

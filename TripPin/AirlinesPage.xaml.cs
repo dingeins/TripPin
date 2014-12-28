@@ -15,6 +15,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.OData.Client;
+using TripPin.DataModel;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
@@ -67,8 +69,10 @@ namespace TripPin
         /// session.  The state will be null the first time a page is visited.</param>
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            var airlines = await App.tripPinContext.Airlines.ExecuteAsync();
-            DefaultViewModel["Airlines"] = airlines;
+            // to add if null logic
+            var query = App.tripPinContext.Airlines.OrderBy(c => c.AirlineCode) as DataServiceQuery<Airline>;
+            var airlinesOrderedByCode = await query.ExecuteAsync();
+            DefaultViewModel["Airlines"] = airlinesOrderedByCode;
         }
 
         /// <summary>
