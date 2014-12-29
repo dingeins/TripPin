@@ -1,4 +1,6 @@
-﻿using TripPin.Common;
+﻿using Windows.Storage;
+using Windows.UI.Popups;
+using TripPin.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,16 +32,6 @@ namespace TripPin
     /// </summary>
     public sealed partial class HubPage : Page
     {
-        // TripPin instances
-        private static Person me = null;
-        private static string myPhotoUri = null;
-        private static int numMyTrips = -1;
-        private static int numMyFriends = -1;
-        private static int numPeople = -1;
-        private static int numPhotos = -1;
-        private static int numAirports = -1;
-        private static int numAirlines = -1;
-
         private readonly NavigationHelper navigationHelper;
         private readonly ObservableDictionary defaultViewModel = new ObservableDictionary();
         private readonly ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView("Resources");
@@ -88,47 +80,87 @@ namespace TripPin
         /// session.  The state will be null the first time a page is visited.</param>
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            if (me == null)
+            // Exception
+            Exception exception = null;
+
+            // Me
+            string myFullName = null;
+            string myUserName = null;
+            string myGender = null;
+            string myEmail = null;
+
+            if (!App.localSettings.Values.ContainsKey("MyEmail"))
             {
-                me = await App.tripPinContext.Me.GetValueAsync();
+                Person me = null;
+                try
+                {
+                    me = await App.tripPinContext.Me.GetValueAsync();
+                }
+                catch (Exception localException)
+                {
+                    exception = localException;
+                }
+
+                if (exception == null)
+                {
+                    myFullName = me.FirstName + " " + me.LastName;
+                    myGender = me.Gender.ToString();
+                    myUserName = me.UserName;
+                    myEmail = me.Emails[0];
+                }
+                else
+                {
+                    await new MessageDialog(exception.Message, "Error loading Me").ShowAsync();
+                }
             }
-            if (myPhotoUri == null)
+            else
             {
-                myPhotoUri = App.serviceUri + "$value";
-            }
-            if (numMyTrips < 0)
-            {
-                numMyTrips = 2;
-            }
-            if (numMyFriends < 0)
-            {
-                numMyFriends = 3;
-            }
-            if (numPeople < 0)
-            {
-                numPeople = 4;
-            }
-            if (numPhotos < 0)
-            {
-                numPhotos = 5;
-            }
-            if (numAirlines < 0)
-            {
-                numAirlines = 6;
-            }
-            if (numAirports < 0)
-            {
-                numAirports = 7;
+                myFullName = App.localSettings.Values["MyFullName"].ToString();
+                myGender = App.localSettings.Values["MyGender"].ToString();
+                myUserName = App.localSettings.Values["MyUserName"].ToString();
+                myEmail = App.localSettings.Values["MyEmail"].ToString();
             }
 
-            this.DefaultViewModel["Me"] = me;
-            this.DefaultViewModel["MyPhotoUri"] = myPhotoUri;
-            this.DefaultViewModel["NumMyTrips"] = numMyTrips.ToString() + " trips";
-            this.DefaultViewModel["NumMyFriends"] = numMyFriends.ToString() + " friends";
-            this.DefaultViewModel["NumPeople"] = numPeople.ToString() + " people";
-            this.DefaultViewModel["NumPhotos"] = numPhotos.ToString() + " photos";
-            this.DefaultViewModel["NumAirlines"] = numAirlines.ToString() + " airlines";
-            this.DefaultViewModel["NumAirports"] = numAirports.ToString() + " airports";
+            this.DefaultViewModel["MyFullName"] = myFullName;
+            this.DefaultViewModel["MyUserName"] = myUserName;
+            this.DefaultViewModel["MyGender"] = myGender;
+            this.DefaultViewModel["MyEmail"] = myEmail;
+
+            // Counts
+            await Utilities.Utilities.AssignCountToPageDataAsync("Me/Friends/$count", "NumMyFriends", DefaultViewModel, " friends");
+            await Utilities.Utilities.AssignCountToPageDataAsync("Me/Trips/$count", "NumMyTrips", DefaultViewModel, " trips");
+            await Utilities.Utilities.AssignCountToPageDataAsync("People/$count", "NumPeople", DefaultViewModel, " people");
+            await Utilities.Utilities.AssignCountToPageDataAsync("Photos/$count", "NumPhotos", DefaultViewModel, " photos");
+            await Utilities.Utilities.AssignCountToPageDataAsync("Airlines/$count", "NumAirlines", DefaultViewModel, " airlines");
+            await Utilities.Utilities.AssignCountToPageDataAsync("Airports/$count", "NumAirports", DefaultViewModel, " airports");
+
+            // MyPhotoUri
+            StorageFile photoFile = null;
+            try
+            {
+                photoFile = await Windows.Storage.ApplicationData.Current.LocalFolder.GetFileAsync("MyPhoto.jpg");
+            }
+            catch (FileNotFoundException fileNotFoundException)
+            {
+
+            }
+            if (photoFile == null)
+            {
+                var photoStream =
+                    (await
+                        App.tripPinContext.GetReadStreamAsync(await App.tripPinContext.Me.Photo.GetValueAsync(),
+                            new DataServiceRequestArgs() { AcceptContentType = "*/*" })).Stream;
+                photoFile = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFileAsync("MyPhoto.jpg");
+                using (var outputStream = await photoFile.OpenStreamForWriteAsync())
+                {
+                    await photoStream.CopyToAsync(outputStream);
+                }
+                this.DefaultViewModel["MyPhotoUri"] = photoFile.Path;
+            }
+            else
+            {
+                this.DefaultViewModel["MyPhotoUri"] = photoFile.Path;
+            }
         }
 
         /// <summary>

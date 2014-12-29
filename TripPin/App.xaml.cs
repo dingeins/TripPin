@@ -1,4 +1,5 @@
-﻿using TripPin.Common;
+﻿using Windows.Storage;
+using TripPin.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,6 +31,7 @@ namespace TripPin
         // TripPin context
         public static readonly string serviceUri = "http://services.odata.org/v4/TripPinServiceRW/";
         public static DefaultContainer tripPinContext = new DefaultContainer(new Uri(serviceUri));
+        public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
         private TransitionCollection transitions;
 

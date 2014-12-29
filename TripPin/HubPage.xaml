@@ -64,17 +64,17 @@
                     <StackPanel Margin="0,0,0,27.5">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{Binding MyPhotoUri}" Stretch="UniformToFill" Width="86" Height="86" />
-                            <StackPanel Margin="15,0,0,0" DataContext="{Binding Me}">
-                                <TextBlock Text="{Binding FullName}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
+                            <StackPanel Margin="15,0,0,0">
+                                <TextBlock Text="{Binding MyFullName}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
                                 <TextBlock Text="Username" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black"/>
-                                <TextBlock Text="{Binding UserName}" Style="{ThemeResource TitleTextBlockStyle}" />
+                                <TextBlock Text="{Binding MyUserName}" Style="{ThemeResource TitleTextBlockStyle}" />
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Margin="0,15,0,0" DataContext="{Binding Me}">
+                        <StackPanel Margin="0,15,0,0">
                             <TextBlock Text="Gender" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black"/>
-                            <TextBlock Text="{Binding Gender}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
-                            <TextBlock Text="Emails" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black"/>
-                            <TextBlock Text="{Binding Emails[0]}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
+                            <TextBlock Text="{Binding MyGender}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
+                            <TextBlock Text="Email" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black"/>
+                            <TextBlock Text="{Binding MyEmail}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
                         </StackPanel>
                         <GridView Margin="0,9.5,0,0">
                             <Grid Margin="0,0,9.5,9.5" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
