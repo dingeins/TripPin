@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Popups;
 using TripPin.Common;
 using System;
@@ -81,93 +82,21 @@ namespace TripPin
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             // Activate progress bar
-            //ProgressBar.Visibility = Visibility.Visible;
-
-            // Exception
-            Exception exception = null;
+            ProgressBar.Visibility = Visibility.Visible;
 
             // Me
-            string myFullName = null;
-            string myUserName = null;
-            string myGender = null;
-            string myEmail = null;
-
-            if (!App.localSettings.Values.ContainsKey("MyEmail"))
-            {
-                Person me = null;
-                try
-                {
-                    me = await App.tripPinContext.Me.GetValueAsync();
-                }
-                catch (Exception localException)
-                {
-                    exception = localException;
-                }
-
-                if (exception == null)
-                {
-                    myFullName = me.FirstName + " " + me.LastName;
-                    myGender = me.Gender.ToString();
-                    myUserName = me.UserName;
-                    myEmail = me.Emails[0];
-                    App.localSettings.Values["MyFullName"] = myFullName;
-                    App.localSettings.Values["MyGender"] = myGender;
-                    App.localSettings.Values["MyUserName"] = myUserName;
-                    App.localSettings.Values["MyEmail"] = myEmail;
-                }
-                else
-                {
-                    await new MessageDialog(exception.Message, "Error loading Me").ShowAsync();
-                }
-            }
-            else
-            {
-                myFullName = App.localSettings.Values["MyFullName"].ToString();
-                myGender = App.localSettings.Values["MyGender"].ToString();
-                myUserName = App.localSettings.Values["MyUserName"].ToString();
-                myEmail = App.localSettings.Values["MyEmail"].ToString();
-            }
-
-            this.DefaultViewModel["MyFullName"] = myFullName;
-            this.DefaultViewModel["MyUserName"] = myUserName;
-            this.DefaultViewModel["MyGender"] = myGender;
-            this.DefaultViewModel["MyEmail"] = myEmail;
+            await AssignMyInfoToPageDataAsync(DefaultViewModel);
 
             // Counts
-            await Utilities.Utilities.AssignCountToPageDataAsync("Me/Friends/$count", "NumMyFriends", DefaultViewModel, " friends");
-            await Utilities.Utilities.AssignCountToPageDataAsync("Me/Trips/$count", "NumMyTrips", DefaultViewModel, " trips");
-            await Utilities.Utilities.AssignCountToPageDataAsync("People/$count", "NumPeople", DefaultViewModel, " people");
-            await Utilities.Utilities.AssignCountToPageDataAsync("Photos/$count", "NumPhotos", DefaultViewModel, " photos");
-            await Utilities.Utilities.AssignCountToPageDataAsync("Airlines/$count", "NumAirlines", DefaultViewModel, " airlines");
-            await Utilities.Utilities.AssignCountToPageDataAsync("Airports/$count", "NumAirports", DefaultViewModel, " airports");
+            await AssignCountToPageDataAsync("Me/Friends/$count", "NumMyFriends", DefaultViewModel, " friends");
+            await AssignCountToPageDataAsync("Me/Trips/$count", "NumMyTrips", DefaultViewModel, " trips");
+            await AssignCountToPageDataAsync("People/$count", "NumPeople", DefaultViewModel, " people");
+            await AssignCountToPageDataAsync("Photos/$count", "NumPhotos", DefaultViewModel, " photos");
+            await AssignCountToPageDataAsync("Airlines/$count", "NumAirlines", DefaultViewModel, " airlines");
+            await AssignCountToPageDataAsync("Airports/$count", "NumAirports", DefaultViewModel, " airports");
 
             // MyPhotoUri
-            StorageFile photoFile = null;
-            try
-            {
-                photoFile = await Windows.Storage.ApplicationData.Current.LocalFolder.GetFileAsync("MyPhoto.jpg");
-            }
-            catch
-            {
-                // Will handle later
-            }
-            if (photoFile == null)
-            {
-                var photoStream =
-                    (await
-                        App.tripPinContext.GetReadStreamAsync(await App.tripPinContext.Me.Photo.GetValueAsync(),
-                            new DataServiceRequestArgs() { AcceptContentType = "*/*" })).Stream;
-                photoFile = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFileAsync("MyPhoto.jpg");
-                using (var outputStream = await photoFile.OpenStreamForWriteAsync())
-                {
-                    await photoStream.CopyToAsync(outputStream);
-                }
-                this.DefaultViewModel["MyPhotoUri"] = photoFile.Path;
-            }
-            else
-            {
-                this.DefaultViewModel["MyPhotoUri"] = photoFile.Path;
-            }
+            await AssignMyPhotoToPageDataAsync(DefaultViewModel);
 
             // Collapse progress bar
             ProgressBar.Visibility = Visibility.Collapsed;
@@ -219,5 +148,129 @@ namespace TripPin
                 throw new Exception(this.resourceLoader.GetString("NavigationFailedExceptionMessage"));
             }
         }
+
+        #region Page data and local storage helpers
+
+        private static async Task AssignCountToPageDataAsync(string path, string key, ObservableDictionary defaultViewModel, string term)
+        {
+            Exception exception = null;
+            int count = 0;
+            if (!App.localSettings.Values.ContainsKey(key))
+            {
+
+                try
+                {
+                    EventHandler<SendingRequest2EventArgs> changePlainTextEventHandler =
+                        (s, args) => args.RequestMessage.SetHeader("Accept", "text/plain;charset=utf-8");
+                    App.tripPinContext.SendingRequest2 += changePlainTextEventHandler;
+                    count =
+                        (await App.tripPinContext.ExecuteAsync<int>(new Uri(App.tripPinContext.BaseUri + path))).First();
+                    App.tripPinContext.SendingRequest2 -= changePlainTextEventHandler;
+                }
+                catch (Exception localException)
+                {
+                    exception = localException;
+                }
+                if (exception == null)
+                {
+                    App.localSettings.Values[key] = count;
+                }
+                else
+                {
+                    await new MessageDialog(exception.Message, "Error loading " + key).ShowAsync();
+                }
+            }
+            else
+            {
+                count = (int)App.localSettings.Values[key];
+            }
+
+            defaultViewModel[key] = count.ToString() + term;
+        }
+
+        // Counts
+        private static async Task AssignMyInfoToPageDataAsync(ObservableDictionary defaultViewModel)
+        {
+            Exception exception = null;
+
+            string myFullName = null;
+            string myUserName = null;
+            string myGender = null;
+            string myEmail = null;
+
+            if (!App.localSettings.Values.ContainsKey("MyEmail"))
+            {
+                Person me = null;
+                try
+                {
+                    me = await App.tripPinContext.Me.GetValueAsync();
+                }
+                catch (Exception localException)
+                {
+                    exception = localException;
+                }
+
+                if (exception == null)
+                {
+                    myFullName = me.FirstName + " " + me.LastName;
+                    myGender = me.Gender.ToString();
+                    myUserName = me.UserName;
+                    myEmail = me.Emails[0];
+                    App.localSettings.Values["MyFullName"] = myFullName;
+                    App.localSettings.Values["MyGender"] = myGender;
+                    App.localSettings.Values["MyUserName"] = myUserName;
+                    App.localSettings.Values["MyEmail"] = myEmail;
+                }
+                else
+                {
+                    await new MessageDialog(exception.Message, "Error loading Me").ShowAsync();
+                }
+            }
+            else
+            {
+                myFullName = App.localSettings.Values["MyFullName"].ToString();
+                myGender = App.localSettings.Values["MyGender"].ToString();
+                myUserName = App.localSettings.Values["MyUserName"].ToString();
+                myEmail = App.localSettings.Values["MyEmail"].ToString();
+            }
+
+            defaultViewModel["MyFullName"] = myFullName;
+            defaultViewModel["MyUserName"] = myUserName;
+            defaultViewModel["MyGender"] = myGender;
+            defaultViewModel["MyEmail"] = myEmail;
+        }
+
+        // My photo
+        private static async Task AssignMyPhotoToPageDataAsync(ObservableDictionary defaultViewModel)
+        {
+            StorageFile photoFile = null;
+            try
+            {
+                photoFile = await Windows.Storage.ApplicationData.Current.LocalFolder.GetFileAsync("MyPhoto.jpg");
+            }
+            catch
+            {
+                // Will handle later
+            }
+            if (photoFile == null)
+            {
+                var photoStream =
+                    (await
+                        App.tripPinContext.GetReadStreamAsync(await App.tripPinContext.Me.Photo.GetValueAsync(),
+                            new DataServiceRequestArgs() { AcceptContentType = "*/*" })).Stream;
+                photoFile = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFileAsync("MyPhoto.jpg");
+                using (var outputStream = await photoFile.OpenStreamForWriteAsync())
+                {
+                    await photoStream.CopyToAsync(outputStream);
+                }
+                defaultViewModel["MyPhotoUri"] = photoFile.Path;
+            }
+            else
+            {
+                defaultViewModel["MyPhotoUri"] = photoFile.Path;
+            }
+        }
+
+        #endregion
     }
 }

@@ -1,4 +1,7 @@
-﻿using TripPin.Common;
+﻿using System.Reflection;
+using System.Threading.Tasks;
+using Windows.UI.Popups;
+using TripPin.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -53,7 +56,7 @@ namespace TripPin
         /// </summary>
         public ObservableDictionary DefaultViewModel
         {
-            get { return this.defaultViewModel; }
+            get { return defaultViewModel; }
         }
 
         /// <summary>
@@ -72,10 +75,8 @@ namespace TripPin
             // Reactivate progress bar
             ProgressBar.Visibility = Visibility.Visible;
 
-            // to add if null logic
-            var query = App.tripPinContext.Airlines.OrderBy(c => c.AirlineCode) as DataServiceQuery<Airline>;
-            var airlinesOrderedByCode = await query.ExecuteAsync();
-            DefaultViewModel["Airlines"] = airlinesOrderedByCode;
+            // Airlines
+            await AssignAirlinesToPageDataAsync(defaultViewModel);
 
             // Collapse progress bar
             ProgressBar.Visibility = Visibility.Collapsed;
@@ -116,6 +117,28 @@ namespace TripPin
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedFrom(e);
+        }
+
+        #endregion
+
+        #region
+
+        private static async Task AssignAirlinesToPageDataAsync(ObservableDictionary defaultViewModel)
+        {
+            Exception exception = null;
+            try
+            {
+                var query = App.tripPinContext.Airlines.OrderBy(c => c.AirlineCode) as DataServiceQuery<Airline>;
+                defaultViewModel["Airlines"] = await query.ExecuteAsync();
+            }
+            catch (Exception localException)
+            {
+                exception = localException;
+            }
+            if (exception != null)
+            {
+                await new MessageDialog(exception.Message, "Error loading " + "Airlines").ShowAsync();
+            }
         }
 
         #endregion
