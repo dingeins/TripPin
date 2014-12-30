@@ -102,7 +102,7 @@
                             <Image Source="Assets/photos.png" Stretch="UniformToFill" Height="138.5" Width="138.5"/>
                             <TextBlock Text="{Binding NumPhotos}" VerticalAlignment="Bottom" Margin="9.5,0,0,6.5" Style="{ThemeResource BaseTextBlockStyle}"/>
                         </Grid>
-                        <Grid Margin="0,0,9.5,9.5" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                        <Grid x:Name="AirportsTile" Margin="0,0,9.5,9.5" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Tapped="AirportsTile_Tapped">
                             <Image Source="Assets/airports.png" Stretch="UniformToFill" Height="138.5" Width="138.5"/>
                             <TextBlock Text="{Binding NumAirports}" VerticalAlignment="Bottom" Margin="9.5,0,0,6.5" Style="{ThemeResource BaseTextBlockStyle}"/>
                         </Grid>

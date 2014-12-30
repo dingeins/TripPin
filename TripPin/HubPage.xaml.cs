@@ -272,5 +272,13 @@ namespace TripPin
         }
 
         #endregion
+
+        private void AirportsTile_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (!Frame.Navigate(typeof(AirportsPage)))
+            {
+                throw new Exception(this.resourceLoader.GetString("NavigationFailedExceptionMessage"));
+            }
+        }
     }
 }

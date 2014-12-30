@@ -1,6 +1,6 @@
-﻿using System.Reflection;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Windows.UI.Popups;
+using Microsoft.OData.Client;
 using TripPin.Common;
 using System;
 using System.Collections.Generic;
@@ -18,22 +18,21 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.OData.Client;
-using TripPin.DataModel;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
+using TripPin.DataModel;
 
 namespace TripPin
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AirlinesPage : Page
+    public sealed partial class AirportsPage : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        public AirlinesPage()
+        public AirportsPage()
         {
             this.InitializeComponent();
 
@@ -56,7 +55,7 @@ namespace TripPin
         /// </summary>
         public ObservableDictionary DefaultViewModel
         {
-            get { return defaultViewModel; }
+            get { return this.defaultViewModel; }
         }
 
         /// <summary>
@@ -128,8 +127,8 @@ namespace TripPin
             Exception exception = null;
             try
             {
-                var query = App.tripPinContext.Airlines.OrderBy(c => c.AirlineCode) as DataServiceQuery<Airline>;
-                defaultViewModel["Airlines"] = await query.ExecuteAsync();
+                var query = App.tripPinContext.Airports.OrderBy(c => c.IcaoCode) as DataServiceQuery<Airport>;
+                defaultViewModel["Airports"] = await query.ExecuteAsync();
             }
             catch (Exception localException)
             {
@@ -137,7 +136,7 @@ namespace TripPin
             }
             if (exception != null)
             {
-                await new MessageDialog(exception.Message, "Error loading " + "Airlines").ShowAsync();
+                await new MessageDialog(exception.Message, "Error loading " + "Airports").ShowAsync();
             }
         }
 
