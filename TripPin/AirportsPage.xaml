@@ -35,7 +35,7 @@
                     <DataTemplate>
                         <StackPanel Margin="0,0,0,19">
                             <TextBlock Text="{Binding IcaoCode}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
-                            <TextBlock Text="{Binding Name}" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" />
+                            <TextBlock Text="{Binding Name}" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="Black" />
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
