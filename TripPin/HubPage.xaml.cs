@@ -107,6 +107,10 @@ namespace TripPin
                     myGender = me.Gender.ToString();
                     myUserName = me.UserName;
                     myEmail = me.Emails[0];
+                    App.localSettings.Values["MyFullName"] = myFullName;
+                    App.localSettings.Values["MyGender"] = myGender;
+                    App.localSettings.Values["MyUserName"] = myUserName;
+                    App.localSettings.Values["MyEmail"] = myEmail;
                 }
                 else
                 {
