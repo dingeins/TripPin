@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using Windows.UI.Popups;
-using Microsoft.OData.Client;
+﻿using Windows.Devices.Geolocation;
 using TripPin.Common;
 using System;
 using System.Collections.Generic;
@@ -27,12 +25,12 @@ namespace TripPin
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AirportsPage : Page
+    public sealed partial class SingleAirportPage : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        public AirportsPage()
+        public SingleAirportPage()
         {
             this.InitializeComponent();
 
@@ -74,8 +72,12 @@ namespace TripPin
             // Reactivate progress bar
             ProgressBar.Visibility = Visibility.Visible;
 
-            // Airlines
-            await AssignAirlinesToPageDataAsync(defaultViewModel);
+            var airport = (Airport) e.NavigationParameter;
+            defaultViewModel["AirportName"] = airport.Name;
+            defaultViewModel["IcaoCode"] = airport.IcaoCode;
+            defaultViewModel["Address"] = airport.Location.Address;
+            defaultViewModel["City"] = airport.Location.City.Name + ", " + airport.Location.City.Region + ", " +
+                                       airport.Location.City.CountryRegion;
 
             // Collapse progress bar
             ProgressBar.Visibility = Visibility.Collapsed;
@@ -119,35 +121,5 @@ namespace TripPin
         }
 
         #endregion
-
-        #region Page data helper
-
-        private static async Task AssignAirlinesToPageDataAsync(ObservableDictionary defaultViewModel)
-        {
-            Exception exception = null;
-            try
-            {
-                var query = App.tripPinContext.Airports.OrderBy(c => c.Name) as DataServiceQuery<Airport>;
-                defaultViewModel["Airports"] = await query.ExecuteAsync();
-            }
-            catch (Exception localException)
-            {
-                exception = localException;
-            }
-            if (exception != null)
-            {
-                await new MessageDialog(exception.Message, "Error loading " + "Airports").ShowAsync();
-            }
-        }
-
-        #endregion
-
-        private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
-        {
-            if (!Frame.Navigate(typeof(SingleAirportPage), (Airport) e.ClickedItem))
-            {
-                throw new Exception("Failed to navigate to a single airport");
-            }
-        }
     }
 }
