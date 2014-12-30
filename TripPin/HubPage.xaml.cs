@@ -80,6 +80,9 @@ namespace TripPin
         /// session.  The state will be null the first time a page is visited.</param>
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
+            // Activate progress bar
+            //ProgressBar.Visibility = Visibility.Visible;
+
             // Exception
             Exception exception = null;
 
@@ -144,9 +147,9 @@ namespace TripPin
             {
                 photoFile = await Windows.Storage.ApplicationData.Current.LocalFolder.GetFileAsync("MyPhoto.jpg");
             }
-            catch (FileNotFoundException fileNotFoundException)
+            catch
             {
-
+                // Will handle later
             }
             if (photoFile == null)
             {
@@ -165,6 +168,9 @@ namespace TripPin
             {
                 this.DefaultViewModel["MyPhotoUri"] = photoFile.Path;
             }
+
+            // Collapse progress bar
+            ProgressBar.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>

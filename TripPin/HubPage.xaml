@@ -118,5 +118,6 @@
 
             </HubSection>
         </Hub>
+        <ProgressBar x:Name="ProgressBar" Height="30" VerticalAlignment="Bottom" IsIndeterminate="True"/>
     </Grid>
 </Page>

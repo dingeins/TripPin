@@ -69,10 +69,16 @@ namespace TripPin
         /// session.  The state will be null the first time a page is visited.</param>
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
+            // Reactivate progress bar
+            ProgressBar.Visibility = Visibility.Visible;
+
             // to add if null logic
             var query = App.tripPinContext.Airlines.OrderBy(c => c.AirlineCode) as DataServiceQuery<Airline>;
             var airlinesOrderedByCode = await query.ExecuteAsync();
             DefaultViewModel["Airlines"] = airlinesOrderedByCode;
+
+            // Collapse progress bar
+            ProgressBar.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>

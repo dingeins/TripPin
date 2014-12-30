@@ -20,6 +20,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/> 
         </Grid.RowDefinitions>
 
         <!-- Title Panel -->
@@ -28,7 +29,6 @@
             <TextBlock x:Uid="AirlinesPageTitle" Text="Airlines" Margin="0,-6.5,0,26.5" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
         </StackPanel>
 
-        <!--TODO: Content should be placed within the following grid-->
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
             <ListView ItemsSource="{Binding Airlines}">
                 <ListView.ItemTemplate>
@@ -45,5 +45,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
+
+        <ProgressBar Grid.Row="2" x:Name="ProgressBar" Height="30" VerticalAlignment="Bottom" IsIndeterminate="True"/>
     </Grid>
 </Page>
