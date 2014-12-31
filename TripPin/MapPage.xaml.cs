@@ -1,5 +1,4 @@
 ﻿using Windows.Devices.Geolocation;
-using Microsoft.Spatial;
 using TripPin.Common;
 using System;
 using System.Collections.Generic;
@@ -26,14 +25,12 @@ namespace TripPin
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SingleAirportPage : Page
+    public sealed partial class MapPage : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        private Airport airport;
-
-        public SingleAirportPage()
+        public MapPage()
         {
             this.InitializeComponent();
 
@@ -70,17 +67,22 @@ namespace TripPin
         /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
         /// a dictionary of state preserved by this page during an earlier
         /// session.  The state will be null the first time a page is visited.</param>
-        private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             // Reactivate progress bar
             ProgressBar.Visibility = Visibility.Visible;
 
-            airport = (Airport) e.NavigationParameter;
+            var airport = (Airport) e.NavigationParameter;
+
+            // Set page view
             defaultViewModel["AirportName"] = airport.Name;
-            defaultViewModel["IcaoCode"] = airport.IcaoCode;
-            defaultViewModel["Address"] = airport.Location.Address;
-            defaultViewModel["City"] = airport.Location.City.Name + ", " + airport.Location.City.Region + ", " +
-                                       airport.Location.City.CountryRegion;
+
+            // Set map view
+            await AirportMap.TrySetViewAsync(new Geopoint(new BasicGeoposition()
+            {
+                Latitude = airport.Location.Loc.Latitude,
+                Longitude = airport.Location.Loc.Longitude
+            }), 12D);
 
             // Collapse progress bar
             ProgressBar.Visibility = Visibility.Collapsed;
@@ -124,13 +126,5 @@ namespace TripPin
         }
 
         #endregion
-
-        private void StackPanel_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (!Frame.Navigate(typeof(MapPage), airport))
-            {
-                throw new Exception("Failed to navigate to a single airport");
-            }
-        }
     }
 }

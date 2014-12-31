@@ -30,13 +30,13 @@
         </StackPanel>
 
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
-            <StackPanel>
+            <StackPanel Tapped="StackPanel_Tapped">
                 <TextBlock Text="ICAO Code" Style="{ThemeResource TitleTextBlockStyle}" Foreground="DeepSkyBlue"/>
                 <TextBlock Text="{Binding IcaoCode}" Style="{ThemeResource ListViewItemTextBlockStyle}" TextWrapping="WrapWholeWords" />
                 <TextBlock Text="Address" Style="{ThemeResource TitleTextBlockStyle}" Foreground="DeepSkyBlue"/>
                 <TextBlock Text="{Binding Address}" Style="{ThemeResource ListViewItemTextBlockStyle}" TextWrapping="WrapWholeWords"/>
                 <TextBlock Text="{Binding City}" Style="{ThemeResource ListViewItemTextBlockStyle}" TextWrapping="WrapWholeWords"/>
-                <Button Content="View the map" Foreground="DeepSkyBlue"/>
+                <Button x:Name="ViewMapButton" Content="View in the map" Foreground="DeepSkyBlue"/>
             </StackPanel>
         </Grid>
 

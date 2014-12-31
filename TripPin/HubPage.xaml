@@ -130,6 +130,13 @@
                         <Hyperlink NavigateUri="https://visualstudiogallery.msdn.microsoft.com/9b786c0e-79d1-4a50-89a5-125e57475937">
                             OData V4 Client Code Generator
                         </Hyperlink>
+                        <LineBreak />
+                        <LineBreak />
+                        <Run Text="This Project is Open Sourced at" Foreground="DeepSkyBlue"/>
+                        <LineBreak />
+                        <Hyperlink NavigateUri="https://github.com/dingeins/TripPin">
+                            https://github.com/dingeins/TripPin
+                        </Hyperlink>
                     </TextBlock>
                 </DataTemplate>
             </HubSection>
