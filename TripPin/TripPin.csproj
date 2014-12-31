@@ -125,9 +125,13 @@
     <Content Include="Assets\AirlineLogos\FM.png" />
     <Content Include="Assets\airlines.png" />
     <Content Include="Assets\airports.png" />
+    <Content Include="Assets\Backgrounds\AirlinesPageBackground.theme-dark.png" />
+    <Content Include="Assets\Backgrounds\AirlinesPageBackground.theme-light.png" />
+    <Content Include="Assets\Backgrounds\AirportsPageBackground.theme-dark.png" />
+    <Content Include="Assets\Backgrounds\AirportsPageBackground.theme-light.png" />
     <Content Include="Assets\LightGray.png" />
-    <Content Include="Assets\HubBackground.theme-dark.png" />
-    <Content Include="Assets\HubBackground.theme-light.png" />
+    <Content Include="Assets\Backgrounds\HubBackground.theme-dark.png" />
+    <Content Include="Assets\Backgrounds\HubBackground.theme-light.png" />
     <Content Include="Assets\Logo.scale-240.png" />
     <Content Include="Assets\people.png" />
     <Content Include="Assets\photos.png" />
