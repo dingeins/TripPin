@@ -66,14 +66,14 @@
                             <Image Source="{Binding MyPhotoUri}" Stretch="UniformToFill" Width="86" Height="86" />
                             <StackPanel Margin="15,0,0,0">
                                 <TextBlock Text="{Binding MyFullName}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
-                                <TextBlock Text="Username" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black"/>
+                                <TextBlock Text="Username" Style="{ThemeResource TitleTextBlockStyle}" Foreground="DeepSkyBlue"/>
                                 <TextBlock Text="{Binding MyUserName}" Style="{ThemeResource TitleTextBlockStyle}" />
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Margin="0,15,0,0">
-                            <TextBlock Text="Gender" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black"/>
+                            <TextBlock Text="Gender" Style="{ThemeResource TitleTextBlockStyle}" Foreground="DeepSkyBlue"/>
                             <TextBlock Text="{Binding MyGender}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
-                            <TextBlock Text="Email" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black"/>
+                            <TextBlock Text="Email" Style="{ThemeResource TitleTextBlockStyle}" Foreground="DeepSkyBlue"/>
                             <TextBlock Text="{Binding MyEmail}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
                         </StackPanel>
                         <GridView Margin="0,9.5,0,0">
@@ -114,8 +114,24 @@
                 </DataTemplate>
             </HubSection>
 
-            <HubSection x:Uid="ThirdSection" Header="Third">
-
+            <HubSection x:Uid="AboutSection" Header="About">
+                <DataTemplate>
+                    <TextBlock Style="{ThemeResource TitleTextBlockStyle}" TextWrapping="Wrap">
+                        <Run Text="This is the demonstration of a Windows Phone 8.1 client application for the TripPin OData V4 sample service."/>
+                        <LineBreak />
+                        <LineBreak />
+                        <Run Text="TripPin Service URL" Foreground="DeepSkyBlue"/>
+                        <LineBreak />
+                        <Run Text="http://services.odata.org/v4/TripPinServiceRW/"/>
+                        <LineBreak />
+                        <LineBreak />
+                        <Run Text="Client Tooling Used" Foreground="DeepSkyBlue"/>
+                        <LineBreak />
+                        <Hyperlink NavigateUri="https://visualstudiogallery.msdn.microsoft.com/9b786c0e-79d1-4a50-89a5-125e57475937">
+                            OData V4 Client Code Generator
+                        </Hyperlink>
+                    </TextBlock>
+                </DataTemplate>
             </HubSection>
         </Hub>
         <ProgressBar x:Name="ProgressBar" Height="30" VerticalAlignment="Bottom" IsIndeterminate="True"/>

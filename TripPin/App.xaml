@@ -8,7 +8,7 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
-                    <ImageBrush x:Key="HubBackgroundImageBrush" ImageSource="Assets/HubBackground.png"/>
+                    <ImageBrush x:Key="HubBackgroundImageBrush" ImageSource="Assets/HubBackground.png" Opacity="0.8"/>
                     <SolidColorBrush x:Key="ProgressBarIndeterminateForegroundThemeBrush" Color="White" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">

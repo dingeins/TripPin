@@ -37,7 +37,7 @@
                             <Image Source="{Binding LogoUri}" Stretch="UniformToFill" Width="86" Height="86" />
                             <StackPanel Margin="15,0,0,0">
                                 <TextBlock Text="{Binding Name}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
-                                <TextBlock Text="Airline code" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black"/>
+                                <TextBlock Text="Airline code" Style="{ThemeResource TitleTextBlockStyle}" Foreground="DeepSkyBlue"/>
                                 <TextBlock Text="{Binding AirlineCode}" Style="{ThemeResource TitleTextBlockStyle}" />
                             </StackPanel>
                         </StackPanel>

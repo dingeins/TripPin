@@ -38,7 +38,7 @@
                     <DataTemplate>
                         <StackPanel Margin="0,0,0,19">
                             <TextBlock Text="{Binding Name}" Style="{ThemeResource ListViewItemTextBlockStyle}" TextWrapping="WrapWholeWords"/>
-                            <TextBlock Text="ICAO Code" Style="{ThemeResource TitleTextBlockStyle}" Foreground="Black" />
+                            <TextBlock Text="ICAO Code" Style="{ThemeResource TitleTextBlockStyle}" Foreground="DeepSkyBlue" />
                             <TextBlock Text="{Binding IcaoCode}" Style="{ThemeResource TitleTextBlockStyle}" />
                         </StackPanel>
                     </DataTemplate>
