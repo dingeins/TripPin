@@ -118,6 +118,8 @@
                 <DataTemplate>
                     <StackPanel>
                         <TextBlock Style="{ThemeResource TitleTextBlockStyle}" TextWrapping="Wrap">
+                        <Run Text="TripPin Version 0.1.0" Foreground="DeepSkyBlue"/>
+                        <LineBreak />
                         <Run Text="This is the demonstration of a Windows Phone 8.1 client application for the TripPin OData V4 sample service."/>
                         <LineBreak />
                         <LineBreak />
