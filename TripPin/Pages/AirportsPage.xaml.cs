@@ -1,4 +1,6 @@
-﻿using Windows.Devices.Geolocation;
+﻿using System.Threading.Tasks;
+using Windows.UI.Popups;
+using Microsoft.OData.Client;
 using TripPin.Common;
 using System;
 using System.Collections.Generic;
@@ -20,17 +22,17 @@ using Windows.UI.Xaml.Navigation;
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 using TripPin.DataModel;
 
-namespace TripPin
+namespace TripPin.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MapPage : Page
+    public sealed partial class AirportsPage : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        public MapPage()
+        public AirportsPage()
         {
             this.InitializeComponent();
 
@@ -72,17 +74,8 @@ namespace TripPin
             // Reactivate progress bar
             ProgressBar.Visibility = Visibility.Visible;
 
-            var airport = (Airport) e.NavigationParameter;
-
-            // Set page view
-            defaultViewModel["AirportName"] = airport.Name;
-
-            // Set map view
-            await AirportMap.TrySetViewAsync(new Geopoint(new BasicGeoposition()
-            {
-                Latitude = airport.Location.Loc.Latitude,
-                Longitude = airport.Location.Loc.Longitude
-            }), 12D);
+            // Airlines
+            await AssignAirlinesToPageDataAsync(defaultViewModel);
 
             // Collapse progress bar
             ProgressBar.Visibility = Visibility.Collapsed;
@@ -126,5 +119,35 @@ namespace TripPin
         }
 
         #endregion
+
+        #region Page data helper
+
+        private static async Task AssignAirlinesToPageDataAsync(ObservableDictionary defaultViewModel)
+        {
+            Exception exception = null;
+            try
+            {
+                var query = App.tripPinContext.Airports.OrderBy(c => c.Name) as DataServiceQuery<Airport>;
+                defaultViewModel["Airports"] = await query.ExecuteAsync();
+            }
+            catch (Exception localException)
+            {
+                exception = localException;
+            }
+            if (exception != null)
+            {
+                await new MessageDialog(exception.Message, "Error loading " + "Airports").ShowAsync();
+            }
+        }
+
+        #endregion
+
+        private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (!Frame.Navigate(typeof(SingleAirportPage), (Airport) e.ClickedItem))
+            {
+                throw new Exception("Failed to navigate to a single airport");
+            }
+        }
     }
 }

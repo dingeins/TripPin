@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using TripPin.DataModel;
 using Microsoft.OData.Client;
+using TripPin.Pages;
 
 // The Hub Application template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 

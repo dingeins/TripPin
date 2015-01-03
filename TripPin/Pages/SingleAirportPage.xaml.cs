@@ -1,6 +1,5 @@
-﻿using System.Reflection;
-using System.Threading.Tasks;
-using Windows.UI.Popups;
+﻿using Windows.Devices.Geolocation;
+using Microsoft.Spatial;
 using TripPin.Common;
 using System;
 using System.Collections.Generic;
@@ -18,22 +17,23 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.OData.Client;
-using TripPin.DataModel;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
+using TripPin.DataModel;
 
-namespace TripPin
+namespace TripPin.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AirlinesPage : Page
+    public sealed partial class SingleAirportPage : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        public AirlinesPage()
+        private Airport airport;
+
+        public SingleAirportPage()
         {
             this.InitializeComponent();
 
@@ -56,7 +56,7 @@ namespace TripPin
         /// </summary>
         public ObservableDictionary DefaultViewModel
         {
-            get { return defaultViewModel; }
+            get { return this.defaultViewModel; }
         }
 
         /// <summary>
@@ -70,13 +70,17 @@ namespace TripPin
         /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
         /// a dictionary of state preserved by this page during an earlier
         /// session.  The state will be null the first time a page is visited.</param>
-        private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             // Reactivate progress bar
             ProgressBar.Visibility = Visibility.Visible;
 
-            // Airlines
-            await AssignAirlinesToPageDataAsync(defaultViewModel);
+            airport = (Airport) e.NavigationParameter;
+            defaultViewModel["AirportName"] = airport.Name;
+            defaultViewModel["IcaoCode"] = airport.IcaoCode;
+            defaultViewModel["Address"] = airport.Location.Address;
+            defaultViewModel["City"] = airport.Location.City.Name + ", " + airport.Location.City.Region + ", " +
+                                       airport.Location.City.CountryRegion;
 
             // Collapse progress bar
             ProgressBar.Visibility = Visibility.Collapsed;
@@ -121,26 +125,12 @@ namespace TripPin
 
         #endregion
 
-        #region Page data helper
-
-        private static async Task AssignAirlinesToPageDataAsync(ObservableDictionary defaultViewModel)
+        private void StackPanel_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Exception exception = null;
-            try
+            if (!Frame.Navigate(typeof(MapPage), airport))
             {
-                var query = App.tripPinContext.Airlines.OrderBy(c => c.AirlineCode) as DataServiceQuery<Airline>;
-                defaultViewModel["Airlines"] = await query.ExecuteAsync();
-            }
-            catch (Exception localException)
-            {
-                exception = localException;
-            }
-            if (exception != null)
-            {
-                await new MessageDialog(exception.Message, "Error loading " + "Airlines").ShowAsync();
+                throw new Exception("Failed to navigate to a single airport");
             }
         }
-
-        #endregion
     }
 }
