@@ -23,7 +23,7 @@ namespace TripPin.DataModel
         {
             get
             {
-                return "Assets/AirlineLogos/" + this._AirlineCode + ".png";
+                return "ms-appx:///Assets/AirlineLogos/" + this._AirlineCode + ".png";
             }
         }
     }
